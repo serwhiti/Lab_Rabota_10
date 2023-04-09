@@ -1,0 +1,71 @@
+# Напишите приложение «Запись на курсы», которая предлагает записаться ученикам 7-11 классов на компьютерные курсы.  
+# Анкета должна содержать следующие поля: фамилия и имя (текстовое поле), пол (радиокнопка), год рождения (список от 2005 до 2010), 
+# название курсов (список из 5 любых наименований). Окно должно быть поделено на 2 фрейма. 
+# В левом фрейме должна отображаться сама анкета и кнопки «Отправить» и «Сброс». После нажатия на кнопку «Отправить» полученная информация 
+# должна отобразиться в соседнем фрейме (каждое заполненное поле в виде отдельной строки с пояснениями).
+
+from tkinter import *
+
+root = Tk()
+root.title("Запись на курсы")
+
+left_frame = Frame(root)
+left_frame.pack(side="left", padx=10, pady=10)
+
+right_frame = Frame(root)
+right_frame.pack(side="right", padx=10, pady=10)
+
+name_var = StringVar()                                          # вводим поля анкеты для учеников
+surname_var = StringVar()
+gender_var = StringVar()
+year_var = StringVar()
+course_var = StringVar()
+
+gender_options = ["Мужской", "Женский"]
+year_options = [str(i) for i in range(2005, 2011)]
+course_options = ["Основы рабтоы с Excel", "Основы программирования на Python", "Основы работы с Photoshop", "Основы работы с робототехникой", "Основы работы с веб-разработкой"]
+
+Label(left_frame, text="Фамилия:").grid(row=0, column=0, sticky="w")
+Entry(left_frame, textvariable=surname_var).grid(row=0, column=1)
+
+Label(left_frame, text="Имя:").grid(row=1, column=0, sticky="w")
+Entry(left_frame, textvariable=name_var).grid(row=1, column=1)
+
+Label(left_frame, text="Пол:").grid(row=2, column=0, sticky="w")
+
+for i, gender in enumerate(gender_options):
+    Radiobutton(left_frame, text=gender, variable=gender_var, value=gender).grid(row=2, column=i+1)
+
+Label(left_frame, text="Год рождения:").grid(row=3, column=0, sticky="w")
+OptionMenu(left_frame, year_var, *year_options).grid(row=3, column=1)
+
+Label(left_frame, text="Курс:").grid(row=4, column=0, sticky="w")
+OptionMenu(left_frame, course_var, *course_options).grid(row=4, column=1)
+
+def submit_form():                                                                                    # функции для кнопок окна
+    name = name_var.get()
+    surname = surname_var.get()
+    gender = gender_var.get()
+    year = year_var.get()
+    course = course_var.get()
+    
+    # проверка на "дурака"
+    if not name or not surname or not gender or not year or not course:
+        messagebox.showerror("Ошибка", "Не все поля заполнены")
+        return
+    info_label.config(text=f"Фамилия: {surname}\nИмя: {name}\nПол: {gender}\nГод рождения: {year}\nКурс: {course}")
+    
+def reset_form():                                                                                     # очищаем все поля и фрейм, тот же рестарт
+    name_var.set("")
+    surname_var.set("")
+    gender_var.set("")
+    year_var.set("")
+    course_var.set("")
+    info_label.config(text="")
+
+Button(left_frame, text="Отправить", command=submit_form).grid(row=5, column=0, pady=11)
+Button(left_frame, text="Сброс", command=reset_form).grid(row=5, column=1, pady=11)
+
+info_label = Label(right_frame, font=("Arial", 12))
+info_label.pack()
+root.mainloop()
